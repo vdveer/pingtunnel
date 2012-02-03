@@ -1,0 +1,24 @@
+### INFO ###
+
+This is a copy of the code from: 
+
+http://code.gerade.org/hans/
+
+for educational purposes and because I'm on github
+
+### Compiling ###
+
+make
+
+### Running as a server ###
+
+./hans -s 10.1.2.0 -r -p password -u nobody
+echo 1 > /proc/sys/net/ipv4/icmp_echo_ignore_all
+
+### Running as a client ###
+
+./hans -c server_address -p password -u nobody
+
+### Help ###
+
+./hans
