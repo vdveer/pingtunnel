@@ -26,7 +26,7 @@
 #include <map>
 #include <queue>
 #include <vector>
-#include <set>
+#include <list>
 
 class Server : public Worker
 {
@@ -37,7 +37,6 @@ public:
 	struct ClientConnectData
 	{
 		uint8_t maxPolls;
-        uint32_t desiredIp;
 	};
 
 	static const Worker::TunnelHeader::Magic magic;
@@ -102,7 +101,7 @@ protected:
 
 	void pollReceived(ClientData *client, uint16_t echoId, uint16_t echoSeq);
 
-	uint32_t reserveTunnelIp(uint32_t desiredIp);
+	uint32_t reserveTunnelIp();
 	void releaseTunnelIp(uint32_t tunnelIp);
 
 	ClientData *getClientByTunnelIp(uint32_t ip);
@@ -111,8 +110,7 @@ protected:
 	Auth auth;
 
 	uint32_t network;
-	std::set<uint32_t> usedIps;
-    uint32_t latestAssignedIpOffset;
+	std::list<uint32_t> usedIps;
 
 	Time pollTimeout;
 

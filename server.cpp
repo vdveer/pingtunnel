@@ -28,8 +28,6 @@
 
 using namespace std;
 
-#define FIRST_ASSIGNED_IP_OFFSET 100
-
 const Worker::TunnelHeader::Magic Server::magic("hans");
 
 Server::Server(int tunnelMtu, const char *deviceName, const char *passphrase, uint32_t network, bool answerEcho, uid_t uid, gid_t gid, int pollTimeout)
@@ -37,7 +35,6 @@ Server::Server(int tunnelMtu, const char *deviceName, const char *passphrase, ui
 {
 	this->network = network & 0xffffff00;
 	this->pollTimeout = pollTimeout;
-    this->latestAssignedIpOffset = FIRST_ASSIGNED_IP_OFFSET - 1;
 
 	tun->setIp(this->network + 1, this->network + 2, true);
 
@@ -68,7 +65,7 @@ void Server::handleUnknownClient(const TunnelHeader &header, int dataLength, uin
 
 	client.maxPolls = connectData->maxPolls;
 	client.state = ClientData::STATE_NEW;
-	client.tunnelIp = reserveTunnelIp(connectData->desiredIp);
+	client.tunnelIp = reserveTunnelIp();
 
 	syslog(LOG_DEBUG, "new client: %s (%s)\n", Utility::formatIp(client.realIp).c_str(), Utility::formatIp(client.tunnelIp).c_str());
 
@@ -189,6 +186,7 @@ bool Server::handleEchoData(const TunnelHeader &header, int dataLength, uint32_t
 				if (dataLength == 0)
 				{
 					syslog(LOG_WARNING, "received empty data packet");
+					throw 0;
 					return true;
 				}
 
@@ -296,7 +294,7 @@ void Server::sendEchoToClient(ClientData *client, int type, int dataLength)
 
 void Server::releaseTunnelIp(uint32_t tunnelIp)
 {
-	usedIps.erase(tunnelIp);
+	usedIps.remove(tunnelIp);
 }
 
 void Server::handleTimeout()
@@ -316,34 +314,23 @@ void Server::handleTimeout()
 	setTimeout(KEEP_ALIVE_INTERVAL);
 }
 
-uint32_t Server::reserveTunnelIp(uint32_t desiredIp)
+uint32_t Server::reserveTunnelIp()
 {
-    if (desiredIp > network + 1 && desiredIp < network + 255 && !usedIps.count(desiredIp))
-    {
-        usedIps.insert(desiredIp);
-        return desiredIp;
-    }
+	uint32_t ip = network + 2;
 
-    bool ipAvailable = false;
+	list<uint32_t>::iterator i;
+	for (i = usedIps.begin(); i != usedIps.end(); ++i)
+	{
+		if (*i > ip)
+			break;
+		ip = ip + 1;
+	}
 
-    for (int i = 0; i < 255 - FIRST_ASSIGNED_IP_OFFSET; i++)
-    {
-        latestAssignedIpOffset++;
-        if (latestAssignedIpOffset == 255)
-            latestAssignedIpOffset = FIRST_ASSIGNED_IP_OFFSET;
-
-        if (!usedIps.count(network + latestAssignedIpOffset))
-        {
-            ipAvailable = true;
-            break;
-        }
-    }
-
-	if (!ipAvailable)
+	if (ip - network >= 255)
 		return 0;
 
-	usedIps.insert(network + latestAssignedIpOffset);
-	return network + latestAssignedIpOffset;
+	usedIps.insert(i, ip);
+	return ip;
 }
 
 void Server::run()

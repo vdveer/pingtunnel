@@ -29,7 +29,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
-#include <stdio.h>
 
 typedef ip IpHeader;
 
@@ -68,11 +67,7 @@ void Tun::setIp(uint32_t ip, uint32_t destIp, bool includeSubnet)
 	string ips = Utility::formatIp(ip);
 	string destIps = Utility::formatIp(destIp);
 
-#ifdef LINUX
-	snprintf(cmdline, sizeof(cmdline), "/sbin/ifconfig %s %s netmask 255.255.255.0", device, ips.c_str());
-#else
 	snprintf(cmdline, sizeof(cmdline), "/sbin/ifconfig %s %s %s netmask 255.255.255.255", device, ips.c_str(), destIps.c_str());
-#endif
 
 	if (system(cmdline) != 0)
 		syslog(LOG_ERR, "could not set tun device ip address");
@@ -90,14 +85,21 @@ void Tun::setIp(uint32_t ip, uint32_t destIp, bool includeSubnet)
 void Tun::write(const char *buffer, int length)
 {
 	if (tun_write(fd, (char *)buffer, length) == -1)
-		syslog(LOG_ERR, "error writing %d bytes to tun: %s", length, strerror(errno));
+	{
+		syslog(LOG_ERR, "error writing %d bytes to tun", length);
+		if (errno != EINVAL) // can be caused by invalid data packet
+			throw Exception("writing to tun", true);
+	}
 }
 
 int Tun::read(char *buffer)
 {
 	int length = tun_read(fd, buffer, mtu);
 	if (length == -1)
-		syslog(LOG_ERR, "error reading from tun: %s", strerror(errno));
+	{
+		syslog(LOG_ERR, "error reading from tun", length);
+		throw Exception("reading from tun", true);
+	}
 	return length;
 }
 

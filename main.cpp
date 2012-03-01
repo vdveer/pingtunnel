@@ -34,11 +34,11 @@
 void usage()
 {
 	printf(
-		"Hans - IP over ICMP version 0.4.1\n\n"
+		"Hans - IP over ICMP version 0.3\n\n"
 		"RUN AS SERVER\n"
-		"  hans -s network [-fvr] [-p password] [-u unprivileged_user] [-d tun_device] [-m reference_mtu] [-a ip]\n\n"
+		"  hans -s network [-fr] [-p password] [-u unprivileged_user] [-d tun_device] [-m reference_mtu]\n\n"
 		"RUN AS CLIENT\n"
-		"  hans -c server  [-fv]  [-p password] [-u unprivileged_user] [-d tun_device] [-m reference_mtu] [-w polls]\n\n"
+		"  hans -c server  [-f]  [-p password] [-u unprivileged_user] [-d tun_device] [-m reference_mtu] [-w polls]\n\n"
 		"ARGUMENTS\n"
 		"  -s network    Run as a server with the given network address for the virtual interface.\n"
 		"  -c server     Connect to a server.\n"
@@ -54,8 +54,7 @@ void usage()
 		"  -w polls      Number of echo requests the client sends to the server for polling.\n"
 		"                0 disables polling. Defaults to 10.\n"
 		"  -i            Change the echo id for every echo request.\n"
-        "  -q            Change the echo sequence number for every echo request.\n"
-        "  -a ip         Try to get assigned the given tunnel ip address.\n"
+		"  -q            Change the echo sequence number for every echo request.\n"
 	);
 }
 
@@ -71,7 +70,6 @@ int main(int argc, char *argv[])
 	int mtu = 1500;
 	int maxPolls = 10;
 	uint32_t network = INADDR_NONE;
-    uint32_t clientIp = INADDR_NONE;
 	bool answerPing = false;
 	uid_t uid = 0;
 	gid_t gid = 0;
@@ -82,7 +80,7 @@ int main(int argc, char *argv[])
 	openlog(argv[0], LOG_PERROR, LOG_DAEMON);
 
 	int c;
-	while ((c = getopt(argc, argv, "fru:d:p:s:c:m:w:qiva:")) != -1)
+	while ((c = getopt(argc, argv, "fru:d:p:s:c:m:w:qiv")) != -1)
 	{
 		switch(c) {
 			case 'f':
@@ -125,9 +123,6 @@ int main(int argc, char *argv[])
 				break;
 			case 'v':
 				verbose = true;
-				break;
-			case 'a':
-				clientIp = ntohl(inet_addr(optarg));
 				break;
 			default:
 				usage();
@@ -195,7 +190,7 @@ int main(int argc, char *argv[])
 				serverIp = *(uint32_t *)he->h_addr;
 			}
 
-			worker = new Client(mtu, device, ntohl(serverIp), maxPolls, password, uid, gid, changeEchoId, changeEchoSeq, clientIp);
+			worker = new Client(mtu, device, ntohl(serverIp), maxPolls, password, uid, gid, changeEchoId, changeEchoSeq);
 		}
 
 		if (!foreground)
