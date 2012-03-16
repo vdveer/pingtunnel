@@ -9,7 +9,7 @@ GPP=/home/gebruiker/Downloads/cross-compiler-armv6l/bin/armv6l-g++
 all: hans
 
 hans: tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o
-	$(GPP) -o hans tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o $(LDFLAGS) -static-libstdc++ 
+	$(GPP) -o hans tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o $(LDFLAGS) 
 
 utility.o: utility.cpp utility.h
 	$(GPP) -c utility.cpp $(CFLAGS)

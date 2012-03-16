@@ -61,7 +61,7 @@ protected:
 		struct EchoId
 		{
 			EchoId(uint16_t id, uint16_t seq) { this->id = id; this->seq = seq; }
-
+			EchoId(){}
 			uint16_t id;
 			uint16_t seq;
 		};
