@@ -1,13 +1,15 @@
-LDFLAGS = `sh osflags ld $(MODE)`
-CFLAGS = -c -g `sh osflags c $(MODE)`
+LDFLAGS = `sh osflags ld $(MODE)` -mfloat-abi=soft -static
+CFLAGS = -c -g `sh osflags c $(MODE)` -mfloat-abi=soft -static
 TUN_DEV_FILE = `sh osflags dev $(MODE)`
-GCC = gcc
-GPP = g++
+#GCC = /usr/bin/arm-linux-gnueabi-gcc-4.6
+#GPP = /usr/bin/arm-linux-gnueabi-g++-4.6
+GCC=/home/gebruiker/Downloads/cross-compiler-armv6l/bin/armv6l-gcc
+GPP=/home/gebruiker/Downloads/cross-compiler-armv6l/bin/armv6l-g++
 
 all: hans
 
 hans: tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o
-	$(GPP) -o hans tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o $(LDFLAGS)
+	$(GPP) -o hans tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o $(LDFLAGS) -static-libstdc++ 
 
 utility.o: utility.cpp utility.h
 	$(GPP) -c utility.cpp $(CFLAGS)

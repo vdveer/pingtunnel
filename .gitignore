@@ -1,2 +1,4 @@
 hans
 *.o
+linux/*.tgz
+linux/*.tar.gz
