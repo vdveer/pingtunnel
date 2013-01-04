@@ -52,7 +52,7 @@ Tun::Tun(const char *device, int mtu)
 		throw Exception("could not create tunnel device");
 
 	char cmdline[512];
-	snprintf(cmdline, sizeof(cmdline), "/sbin/ifconfig %s mtu %u", this->device, mtu);
+	snprintf(cmdline, sizeof(cmdline), "ifconfig %s mtu %u", this->device, mtu);
 	if (system(cmdline) != 0)
 		syslog(LOG_ERR, "could not set tun device mtu");
 }
@@ -69,9 +69,9 @@ void Tun::setIp(uint32_t ip, uint32_t destIp, bool includeSubnet)
 	string destIps = Utility::formatIp(destIp);
 
 #ifdef LINUX
-	snprintf(cmdline, sizeof(cmdline), "/sbin/ifconfig %s %s netmask 255.255.255.0", device, ips.c_str());
+	snprintf(cmdline, sizeof(cmdline), "ifconfig %s %s netmask 255.255.255.0", device, ips.c_str());
 #else
-	snprintf(cmdline, sizeof(cmdline), "/sbin/ifconfig %s %s %s netmask 255.255.255.255", device, ips.c_str(), destIps.c_str());
+	snprintf(cmdline, sizeof(cmdline), "ifconfig %s %s %s netmask 255.255.255.255", device, ips.c_str(), destIps.c_str());
 #endif
 
 	if (system(cmdline) != 0)
@@ -80,7 +80,7 @@ void Tun::setIp(uint32_t ip, uint32_t destIp, bool includeSubnet)
 #ifndef LINUX
 	if (includeSubnet)
 	{
-		snprintf(cmdline, sizeof(cmdline), "/sbin/route add %s/24 %s", destIps.c_str(), destIps.c_str());
+		snprintf(cmdline, sizeof(cmdline), "route add %s/24 %s", destIps.c_str(), destIps.c_str());
 		if (system(cmdline) != 0)
 			syslog(LOG_ERR, "could not add route");
 	}
