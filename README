@@ -12,13 +12,20 @@ make
 
 ### Running as a server ###
 
-./hans -s 10.1.2.0 -r -p password -u nobody
+./hans++ -s 10.1.2.0 -r -p password -u nobody
 echo 1 > /proc/sys/net/ipv4/icmp_echo_ignore_all
 
 ### Running as a client ###
 
-./hans -c server_address -p password -u nobody
+./hans++ -c server_address -p password -u nobody
 
 ### Help ###
 
-./hans
+./hans++
+
+### Work in progress ###
+
+Adding a OneTimePadded option to truely secure the ip channel. Generate true random data with a good hardware generator, if you are, like me, waiting for entropykey.co.uk to start selling their cheap 60usd usbkey again, use dd in the meantime to generate a gb of pseudorandom. for example : dd bs=1048576 count=1024 </dev/urandom >./testrandom   (urandom for speed;)) exchange on usbkey or something.
+
+./hans++ -s 192.168.192.0 -o ./testrandom -p testpass
+./hans++ -c $SERVERIP -p testpass ./testrandom 

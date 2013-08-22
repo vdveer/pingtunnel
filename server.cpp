@@ -32,8 +32,8 @@ using namespace std;
 
 const Worker::TunnelHeader::Magic Server::magic("hans");
 
-Server::Server(int tunnelMtu, const char *deviceName, const char *passphrase, uint32_t network, bool answerEcho, uid_t uid, gid_t gid, int pollTimeout)
-	: Worker(tunnelMtu, deviceName, answerEcho, uid, gid), auth(passphrase)
+Server::Server(int tunnelMtu, const char *deviceName, const char *passphrase, uint32_t network, bool answerEcho, uid_t uid, gid_t gid, int pollTimeout, const char *otpfile)
+	: Worker(tunnelMtu, deviceName, answerEcho, uid, gid, otpfile), auth(passphrase)
 {
 	this->network = network & 0xffffff00;
 	this->pollTimeout = pollTimeout;

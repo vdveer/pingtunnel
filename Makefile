@@ -4,10 +4,10 @@ TUN_DEV_FILE = `sh osflags dev $(MODE)`
 GCC = gcc
 GPP = g++
 
-all: hans
+all: hans++
 
-hans: tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o
-	$(GPP) -o hans tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o $(LDFLAGS)
+hans++: tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o otp.o
+	$(GPP) -o hans++ tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o otp.o $(LDFLAGS)
 
 utility.o: utility.cpp utility.h
 	$(GPP) -c utility.cpp $(CFLAGS)
@@ -45,8 +45,11 @@ worker.o: worker.cpp worker.h tun.h exception.h time.h echo.h tun_dev.h config.h
 time.o: time.cpp time.h
 	$(GPP) -c time.cpp $(CFLAGS)
 
+otp.o: otp.cpp
+	$(GPP) -c otp.cpp $(CFLAGS)
+
 clean:
-	rm -f tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o tunemu.o hans
+	rm -f tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o tunemu.o hans++
 
 
 tunemu.o: tunemu.h tunemu.c

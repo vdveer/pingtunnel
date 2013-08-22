@@ -30,7 +30,7 @@
 class Worker
 {
 public:
-	Worker(int tunnelMtu, const char *deviceName, bool answerEcho, uid_t uid, gid_t gid);
+	Worker(int tunnelMtu, const char *deviceName, bool answerEcho, uid_t uid, gid_t gid, const char *otpfile);
 	virtual ~Worker();
 
 	virtual void run();

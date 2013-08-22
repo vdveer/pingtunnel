@@ -33,8 +33,8 @@ const Worker::TunnelHeader::Magic Client::magic("hanc");
 
 Client::Client(int tunnelMtu, const char *deviceName, uint32_t serverIp,
                int maxPolls, const char *passphrase, uid_t uid, gid_t gid,
-               bool changeEchoId, bool changeEchoSeq, uint32_t desiredIp)
-: Worker(tunnelMtu, deviceName, false, uid, gid), auth(passphrase)
+               bool changeEchoId, bool changeEchoSeq, uint32_t desiredIp, const char *otpfile)
+: Worker(tunnelMtu, deviceName, false, uid, gid, otpfile), auth(passphrase)
 {
 	this->serverIp = serverIp;
     this->clientIp = INADDR_NONE;
