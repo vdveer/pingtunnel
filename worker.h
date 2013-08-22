@@ -25,6 +25,7 @@
 #include "tun.h"
 
 #include <string>
+#include <unistd.h>
 
 class Worker
 {
