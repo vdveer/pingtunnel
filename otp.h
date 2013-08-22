@@ -40,5 +40,5 @@ protected:
  	int readPos;
  	int writePos;
  	int otpFD;
-
+ 	int filesize;
  };

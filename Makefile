@@ -39,13 +39,13 @@ server.o: server.cpp server.h client.h utility.h config.h worker.h auth.h time.h
 auth.o: auth.cpp auth.h sha1.h utility.h
 	$(GPP) -c auth.cpp $(CFLAGS)
 
-worker.o: worker.cpp worker.h tun.h exception.h time.h echo.h tun_dev.h config.h
+worker.o: worker.cpp worker.h tun.h exception.h time.h echo.h tun_dev.h config.h otp.h
 	$(GPP) -c worker.cpp $(CFLAGS)
 
 time.o: time.cpp time.h
 	$(GPP) -c time.cpp $(CFLAGS)
 
-otp.o: otp.cpp
+otp.o: otp.cpp otp.h
 	$(GPP) -c otp.cpp $(CFLAGS)
 
 clean:

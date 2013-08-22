@@ -22,13 +22,15 @@
 
 #include <string>
 #include <stdint.h>
+#include <fcntl.h>
 
-	otp::otp(const char *filename,  bool server){
-
+	otp::otp(const char *filenameIN,  bool server){
+		filename = filenameIN;
+		isServer = server;
 	}
 
  	otp::~otp(){
-
+ 		close(otpFD);
  	}
 
 	int openOTPFile(){

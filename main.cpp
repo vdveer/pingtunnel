@@ -56,7 +56,7 @@ void usage()
 		"  -i            Change the echo id for every echo request.\n"
         "  -q            Change the echo sequence number for every echo request.\n"
         "  -a ip         Try to get assigned the given tunnel ip address.\n"
-        "  -o file	OneTimePad the IP channel with random data at file-path\n"
+        "  -o file	OneTimePad the IP channel with random data at file-path [NOT WORKING YET]\n"
 	);
 }
 
