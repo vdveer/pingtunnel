@@ -19,30 +19,84 @@
  */
 
 #include "otp.h"
+#include "exception.h"
+#include "string.h"
 
+#include <algorithm>
+#include <vector>
 #include <string>
 #include <stdint.h>
 #include <fcntl.h>
+#include <stdio.h>
+#include <iostream>
+#include <fstream>
 
-	otp::otp(const char *filenameIN,  bool server){
+using namespace std;
+
+char * memblockread;
+char * memblockwrite;
+
+	Otp::Otp(const char *filenameIN,  bool server){
 		filename = filenameIN;
 		isServer = server;
+		this->openOTPFile();
 	}
 
- 	otp::~otp(){
- 		close(otpFD);
+ 	Otp::~Otp(){
+ 		otpFD.close();
  	}
 
-	int openOTPFile(){
-		return -1;
+	int Otp::openOTPFile(){
+		this->readPos = 0;
+		this->writePos = 0;
+		Otp::otpFD.open(filename, ios::in | ios::out | ios::binary | ios::ate );
+
+	  	if (this->otpFD.is_open())
+	  	{
+	   	 	this->filesize = otpFD.tellg();
+	   		this->writeEncode("test");
+	   	 	return 0;
+	  	}
+	  	throw Exception("Failed to open OTPfile");
+	  	return -1;
 	}
 
- 	int writeEncode(char *buffer){
- 		return -1;
+ 	int Otp::writeEncode(char *buffer){
+ 		if(this->readPos+this->writePos > filesize)
+ 				throw Exception("No more random data, giving up...");
+ 		if(this->otpFD.is_open()){
+ 			int size = strlen(buffer);
+ 			memblockwrite = new char[size];
+ 			if(this->isServer){
+	    		otpFD.seekg(this->writePos, ios::beg);
+	    		otpFD.read(memblockwrite, size);
+	    		for(int i = 0; i < size; i++){
+	    			buffer[i] = buffer[i] ^ memblockwrite[i];
+	    		}
+    		}
+    		else{
+    			otpFD.seekg(this->writePos+size, ios::end);
+    			otpFD.read(memblockwrite, size);
+    			for(int i = 0; i < size; i++){
+	    			buffer[i] = buffer[i] ^ memblockwrite[size-i];
+	    		}
+    		}
+ 			this->writePos = this->writePos + size;
+ 			return 0;
+ 		}// all not working...
+ 		throw Exception("Failed to read OTPfile, giving up...");	
  	}
 
- 	int readDecode(char *buffer){
- 		return -1;
+ 	int Otp::readDecode(char *buffer){
+ 		if(this->readPos+this->writePos > filesize)
+ 				throw Exception("No more random data, giving up...");
+ 		if(this->otpFD.is_open()){
+ 			int size = strlen(buffer);
+ 			//magic
+ 			this->readPos = this->readPos + size;
+ 			return 0;
+ 		}
+ 		throw Exception("Failed to read OTPfile, giving up...");
  	}
 
  	/*

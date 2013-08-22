@@ -1,5 +1,6 @@
 LDFLAGS = `sh osflags ld $(MODE)`
 CFLAGS = -c -g `sh osflags c $(MODE)`
+#CFLAGS = -c -g `sh osflags c $(MODE)` -std=c++11
 TUN_DEV_FILE = `sh osflags dev $(MODE)`
 GCC = gcc
 GPP = g++

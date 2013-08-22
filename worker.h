@@ -23,14 +23,15 @@
 #include "time.h"
 #include "echo.h"
 #include "tun.h"
-
+#include "otp.h"
+ 
 #include <string>
 #include <unistd.h>
 
 class Worker
 {
 public:
-	Worker(int tunnelMtu, const char *deviceName, bool answerEcho, uid_t uid, gid_t gid, const char *otpfile);
+	Worker(int tunnelMtu, const char *deviceName, bool answerEcho, uid_t uid, gid_t gid, const char *otpfile, bool isServer);
 	virtual ~Worker();
 
 	virtual void run();
@@ -86,6 +87,7 @@ protected:
 
 	Echo *echo;
 	Tun *tun;
+	Otp *otp;
 	bool alive;
 	bool answerEcho;
 	int tunnelMtu;

@@ -159,9 +159,6 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	if(otpfile != NULL)
-		printf("Using OTP-file :%s\n", otpfile);
-
 	if (userName != NULL)
 	{
 		passwd *pw = getpwnam(userName);

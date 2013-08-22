@@ -20,25 +20,28 @@
 
 #include <string>
 #include <stdint.h>
+#include <iostream>
+#include <fstream>
 
- class otp{
+using namespace std;
+
+class Otp{
 
 public:
-	otp(const char *filename,  bool server);
- 	~otp();
+	Otp(const char *filename,  bool server);
+ 	~Otp();
 	int openOTPFile();
- 	int getReadPos(){ return readPos; };
- 	int getWritePos(){ return writePos; };
- 	int setReadPos(int position) { readPos = position; };
- 	int setWritePos(int position){ writePos = position; };
+ 	long getReadPos(){ return readPos; };
+ 	long getWritePos(){ return writePos; };
+ 	int setReadPos(long position) { readPos = position; };
+ 	int setWritePos(long position){ writePos = position; };
  	int writeEncode(char *buffer);
  	int readDecode(char *buffer);
- 	int getOtpFD(){ return otpFD; }
 protected:
  	bool isServer;
  	const char *filename;
- 	int readPos;
- 	int writePos;
- 	int otpFD;
- 	int filesize;
+ 	long readPos;
+ 	long writePos;
+ 	fstream otpFD;
+ 	long filesize;
  };
