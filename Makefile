@@ -49,7 +49,7 @@ otp.o: otp.cpp
 	$(GPP) -c otp.cpp $(CFLAGS)
 
 clean:
-	rm -f tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o tunemu.o hans++
+	rm -f tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o tunemu.o otp.o hans++
 
 
 tunemu.o: tunemu.h tunemu.c
