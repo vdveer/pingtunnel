@@ -54,7 +54,6 @@ char * memblockwrite;
 	  	if (this->otpFD.is_open())
 	  	{
 	   	 	this->filesize = otpFD.tellg();
-	   		this->writeEncode("test	");
 	   	 	return 0;
 	  	}
 	  	throw Exception("Failed to open OTPfile");
@@ -71,8 +70,7 @@ char * memblockwrite;
 	    		otpFD.seekg(this->writePos, ios::beg);
 	    		otpFD.read(memblockwrite, size);
 	    		for(int i = 0; i < size; i++){
-	    			char a = buffer[i] ^ memblockwrite[i];
-	    			buffer[i] = a;
+	    			buffer[i] = buffer[i] ^ memblockwrite[i];
 	    		}
     		}
     		else{
@@ -84,7 +82,7 @@ char * memblockwrite;
     		}
  			this->writePos = this->writePos + size;
  			return 0;
- 		}// all not working...
+ 		}
  		throw Exception("Failed to read OTPfile, giving up...");	
  	}
 
@@ -93,17 +91,23 @@ char * memblockwrite;
  				throw Exception("No more random data, giving up...");
  		if(this->otpFD.is_open()){
  			int size = strlen(buffer);
- 			//magic
+ 			memblockread = new char[size];
+ 			if(!this->isServer){
+	    		otpFD.seekg(this->readPos, ios::beg);
+	    		otpFD.read(memblockread, size);
+	    		for(int i = 0; i < size; i++){
+	    			buffer[i] = buffer[i] ^ memblockread[i];
+	    		}
+    		}
+    		else{
+    			otpFD.seekg(this->readPos+size, ios::end);
+    			otpFD.read(memblockread, size);
+    			for(int i = 0; i < size; i++){
+	    			buffer[i] = buffer[i] ^ memblockread[size-i];
+	    		}
+    		}
  			this->readPos = this->readPos + size;
  			return 0;
  		}
  		throw Exception("Failed to read OTPfile, giving up...");
  	}
-
- 	/*
- 	 * bool isServer;
- 	 * const char *filename;
- 	 * int readPos;
- 	 * int writePos;
- 	 * int otpFD;
- 	 */

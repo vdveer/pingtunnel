@@ -23,7 +23,6 @@
 #include "time.h"
 #include "echo.h"
 #include "tun.h"
-#include "otp.h"
  
 #include <string>
 #include <unistd.h>
@@ -87,7 +86,6 @@ protected:
 
 	Echo *echo;
 	Tun *tun;
-	Otp *otp;
 	bool alive;
 	bool answerEcho;
 	int tunnelMtu;

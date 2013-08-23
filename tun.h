@@ -21,6 +21,7 @@
 #define TUN_H
 
 #include "tun_dev.h"
+#include "otp.h"
 
 #include <string>
 #include <stdint.h>
@@ -28,7 +29,7 @@
 class Tun
 {
 public:
-	Tun(const char *device, int mtu);
+	Tun(const char *device, int mtu, const char *otpfile, bool isServer);
 	~Tun();
 
 	int getFd() { return fd; }
@@ -36,10 +37,11 @@ public:
 	int read(char *buffer);
 	int read(char *buffer, uint32_t &sourceIp, uint32_t &destIp);
 
-	void write(const char *buffer, int length);
+	void write(char *buffer, int length);
 
 	void setIp(uint32_t ip, uint32_t destIp, bool includeSubnet);
 protected:
+	Otp *otp;
 	char device[VTUN_DEV_LEN];
 
 	int mtu;

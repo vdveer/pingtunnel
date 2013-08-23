@@ -55,23 +55,18 @@ Worker::Worker(int tunnelMtu, const char *deviceName, bool answerEcho, uid_t uid
 
 	echo = NULL;
 	tun = NULL;
-	otp = NULL;
 
 
 	try
 	{
 		echo = new Echo(tunnelMtu + sizeof(TunnelHeader));
-		tun = new Tun(deviceName, tunnelMtu);
-		if(otpfile != NULL){
-			otp = new Otp(otpfile, isServer);
-		}
+		tun = new Tun(deviceName, tunnelMtu, otpfile, isServer);
 
 	}
 	catch (...)
 	{
 		delete echo;
 		delete tun;
-		delete otp;
 
 		throw;
 	}
@@ -81,7 +76,6 @@ Worker::~Worker()
 {
 	delete echo;
 	delete tun;
-	delete otp;
 }
 
 void Worker::sendEcho(const TunnelHeader::Magic &magic, int type, int length, uint32_t realIp, bool reply, uint16_t id, uint16_t seq)

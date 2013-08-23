@@ -7,8 +7,8 @@ GPP = g++
 
 all: hans++
 
-hans++: tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o otp.o
-	$(GPP) -o hans++ tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o otp.o $(LDFLAGS)
+hans++: otp.o tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o
+	$(GPP) -o hans++ otp.o tun.o sha1.o main.o client.o server.o auth.o worker.o time.o tun_dev.o echo.o exception.o utility.o $(LDFLAGS)
 
 utility.o: utility.cpp utility.h
 	$(GPP) -c utility.cpp $(CFLAGS)
@@ -19,7 +19,7 @@ exception.o: exception.cpp exception.h
 echo.o: echo.cpp echo.h exception.h
 	$(GPP) -c echo.cpp $(CFLAGS)
 
-tun.o: tun.cpp tun.h exception.h utility.h tun_dev.h
+tun.o: tun.cpp otp.h tun.h exception.h utility.h tun_dev.h 
 	$(GPP) -c tun.cpp $(CFLAGS)
 
 tun_dev.o:
@@ -40,7 +40,7 @@ server.o: server.cpp server.h client.h utility.h config.h worker.h auth.h time.h
 auth.o: auth.cpp auth.h sha1.h utility.h
 	$(GPP) -c auth.cpp $(CFLAGS)
 
-worker.o: worker.cpp worker.h tun.h exception.h time.h echo.h tun_dev.h config.h otp.h
+worker.o: worker.cpp worker.h tun.h exception.h time.h echo.h tun_dev.h config.h
 	$(GPP) -c worker.cpp $(CFLAGS)
 
 time.o: time.cpp time.h

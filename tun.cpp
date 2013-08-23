@@ -35,9 +35,11 @@ typedef ip IpHeader;
 
 using namespace std;
 
-Tun::Tun(const char *device, int mtu)
+Tun::Tun(const char *device, int mtu, const char *otpfile, bool isServer)
 {
 	this->mtu = mtu;
+
+	otp = NULL;
 
 	if (device != NULL)
 	{
@@ -46,6 +48,17 @@ Tun::Tun(const char *device, int mtu)
 	}
 	else
 		this->device[0] = 0;
+
+	try{
+		if(otpfile != NULL){
+			otp = new Otp(otpfile, isServer);
+		}
+	}catch (...)
+	{
+		delete otp;
+
+		throw;
+	}
 
 	fd = tun_open(this->device);
 	if (fd == -1)
@@ -87,8 +100,11 @@ void Tun::setIp(uint32_t ip, uint32_t destIp, bool includeSubnet)
 #endif
 }
 
-void Tun::write(const char *buffer, int length)
+void Tun::write(char *buffer, int length)
 {
+	if(otp != NULL){
+		otp->writeEncode(buffer);
+	}
 	if (tun_write(fd, (char *)buffer, length) == -1)
 		syslog(LOG_ERR, "error writing %d bytes to tun: %s", length, strerror(errno));
 }
@@ -104,6 +120,8 @@ int Tun::read(char *buffer)
 int Tun::read(char *buffer, uint32_t &sourceIp, uint32_t &destIp)
 {
 	int length = read(buffer);
+	if(otp != NULL)
+		otp->readDecode(buffer);
 
 	IpHeader *header = (IpHeader *)buffer;
 	sourceIp = ntohl(header->ip_src.s_addr);
