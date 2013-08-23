@@ -54,7 +54,7 @@ char * memblockwrite;
 	  	if (this->otpFD.is_open())
 	  	{
 	   	 	this->filesize = otpFD.tellg();
-	   		this->writeEncode("test");
+	   		this->writeEncode("test	");
 	   	 	return 0;
 	  	}
 	  	throw Exception("Failed to open OTPfile");
@@ -71,7 +71,8 @@ char * memblockwrite;
 	    		otpFD.seekg(this->writePos, ios::beg);
 	    		otpFD.read(memblockwrite, size);
 	    		for(int i = 0; i < size; i++){
-	    			buffer[i] = buffer[i] ^ memblockwrite[i];
+	    			char a = buffer[i] ^ memblockwrite[i];
+	    			buffer[i] = a;
 	    		}
     		}
     		else{
